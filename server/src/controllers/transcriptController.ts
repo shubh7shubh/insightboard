@@ -22,17 +22,17 @@ export const createTranscript = asyncHandler(
         // Sample Generate mock tasks
         actionItems = [
           {
-            title: "Prepare proposal",
+            title: "Prepare Spreadsheet",
             description:
               "John will prepare the proposal by Friday as discussed in the meeting",
           },
           {
-            title: "Review budget",
+            title: "Review Workflow",
             description:
               "Sarah to review the budget for the new feature release",
           },
           {
-            title: "Schedule follow-up meeting",
+            title: "Schedule Meeting",
             description: "Schedule a follow-up meeting for next Tuesday",
           },
         ];
