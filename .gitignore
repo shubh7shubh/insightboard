@@ -137,3 +137,30 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Prisma
+node_modules/.prisma
+prisma/migrations/*  
+
+# Supabase 
+.supabase/
+supabase/config.toml
+supabase/.temp
+logs
+*.logs
+Claude.md
+.claude
+dist/
+build/
+*.tsbuildinfo
+temp/
+*.tmp
+*.temp
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
