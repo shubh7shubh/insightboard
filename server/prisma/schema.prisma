@@ -23,17 +23,26 @@ model Transcript {
 }
 
 model Task {
-  id           String     @id @default(uuid())
+  id           String       @id @default(uuid())
   title        String
   description  String?
-  status       TaskStatus @default(PENDING)
+  status       TaskStatus   @default(PENDING)
+  priority     TaskPriority @default(MEDIUM)
+  tags         String[]     @default([])
   transcriptId String
-  transcript   Transcript @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  transcript   Transcript   @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 }
 
 enum TaskStatus {
   PENDING
   COMPLETED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }

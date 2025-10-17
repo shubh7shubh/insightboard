@@ -10,7 +10,11 @@ import {
   ListTodo, 
   Search,
   Filter,
-  Loader2 
+  Loader2,
+  ArrowUpDown,
+  AlertTriangle,
+  Zap,
+  Minus
 } from "lucide-react";
 import { Task } from "@/types";
 import { useState } from "react";
@@ -24,9 +28,13 @@ interface TaskListProps {
 }
 
 type FilterType = 'all' | 'pending' | 'completed';
+type PriorityFilterType = 'all' | 'low' | 'medium' | 'high' | 'urgent';
+type SortType = 'status' | 'priority' | 'created' | 'title';
 
 export function TaskList({ tasks, onTaskUpdated, isLoading = false }: TaskListProps) {
   const [filter, setFilter] = useState<FilterType>('all');
+  const [priorityFilter, setPriorityFilter] = useState<PriorityFilterType>('all');
+  const [sortBy, setSortBy] = useState<SortType>('status');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter and search tasks
@@ -36,20 +44,43 @@ export function TaskList({ tasks, onTaskUpdated, isLoading = false }: TaskListPr
       (filter === 'pending' && task.status === 'PENDING') ||
       (filter === 'completed' && task.status === 'COMPLETED');
     
+    const matchesPriorityFilter = 
+      priorityFilter === 'all' ||
+      task.priority.toLowerCase() === priorityFilter;
+    
     const matchesSearch = 
       searchQuery === '' ||
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      task.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    return matchesFilter && matchesSearch;
+    return matchesFilter && matchesPriorityFilter && matchesSearch;
   });
 
-  // Sort tasks: pending first, then by creation date (newest first)
+  // Sort tasks with multiple sort options
   const sortedTasks = [...filteredTasks].sort((a, b) => {
-    if (a.status !== b.status) {
-      return a.status === 'PENDING' ? -1 : 1;
+    switch (sortBy) {
+      case 'priority': {
+        const priorityOrder = { 'URGENT': 4, 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1 };
+        const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
+        if (priorityDiff !== 0) return priorityDiff;
+        // Secondary sort by status
+        if (a.status !== b.status) {
+          return a.status === 'PENDING' ? -1 : 1;
+        }
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+      case 'created':
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      case 'title':
+        return a.title.localeCompare(b.title);
+      case 'status':
+      default:
+        if (a.status !== b.status) {
+          return a.status === 'PENDING' ? -1 : 1;
+        }
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     }
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 
   const totalTasks = tasks.length;
@@ -64,6 +95,29 @@ export function TaskList({ tasks, onTaskUpdated, isLoading = false }: TaskListPr
       default: return 0;
     }
   };
+
+  const getPriorityFilterCount = (priorityFilterType: PriorityFilterType) => {
+    switch (priorityFilterType) {
+      case 'all': return totalTasks;
+      case 'urgent': return tasks.filter(task => task.priority === 'URGENT').length;
+      case 'high': return tasks.filter(task => task.priority === 'HIGH').length;
+      case 'medium': return tasks.filter(task => task.priority === 'MEDIUM').length;
+      case 'low': return tasks.filter(task => task.priority === 'LOW').length;
+      default: return 0;
+    }
+  };
+
+  const getPriorityIcon = (priority: string) => {
+    switch (priority) {
+      case 'urgent': return <Zap className="h-3 w-3" />;
+      case 'high': return <AlertTriangle className="h-3 w-3" />;
+      case 'medium': return <Minus className="h-3 w-3" />;
+      case 'low': return <Clock className="h-3 w-3" />;
+      default: return null;
+    }
+  };
+
+  const getSortIcon = () => <ArrowUpDown className="h-3 w-3" />;
 
   if (isLoading) {
     return (
@@ -115,9 +169,10 @@ export function TaskList({ tasks, onTaskUpdated, isLoading = false }: TaskListPr
               />
             </div>
 
-            {/* Filter Buttons */}
-            <div className="flex items-center gap-2">
+            {/* Status Filter Buttons */}
+            <div className="flex items-center gap-2 flex-wrap">
               <Filter className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium text-muted-foreground">Status:</span>
               <div className="flex gap-1">
                 {(['all', 'pending', 'completed'] as const).map((filterType) => (
                   <Button
@@ -138,24 +193,74 @@ export function TaskList({ tasks, onTaskUpdated, isLoading = false }: TaskListPr
                 ))}
               </div>
             </div>
+
+            {/* Priority Filter Buttons */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-sm font-medium text-muted-foreground">Priority:</span>
+              <div className="flex gap-1">
+                {(['all', 'urgent', 'high', 'medium', 'low'] as const).map((priorityFilterType) => (
+                  <Button
+                    key={priorityFilterType}
+                    variant={priorityFilter === priorityFilterType ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setPriorityFilter(priorityFilterType)}
+                    className="capitalize"
+                  >
+                    {priorityFilterType === 'all' ? (
+                      <ListTodo className="mr-2 h-3 w-3" />
+                    ) : (
+                      <span className="mr-2">{getPriorityIcon(priorityFilterType)}</span>
+                    )}
+                    {priorityFilterType}
+                    <Badge variant="secondary" className="ml-2">
+                      {getPriorityFilterCount(priorityFilterType)}
+                    </Badge>
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Sort Options */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-sm font-medium text-muted-foreground">Sort by:</span>
+              <div className="flex gap-1">
+                {(['status', 'priority', 'created', 'title'] as const).map((sortType) => (
+                  <Button
+                    key={sortType}
+                    variant={sortBy === sortType ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSortBy(sortType)}
+                    className="capitalize"
+                  >
+                    {getSortIcon()}
+                    <span className="ml-1">{sortType === 'created' ? 'Date' : sortType}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Results Summary */}
-      {(searchQuery || filter !== 'all') && (
+      {(searchQuery || filter !== 'all' || priorityFilter !== 'all' || sortBy !== 'status') && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
             Showing {sortedTasks.length} of {totalTasks} task{totalTasks !== 1 ? 's' : ''}
             {searchQuery && ` matching "${searchQuery}"`}
+            {filter !== 'all' && ` (${filter})`}
+            {priorityFilter !== 'all' && ` (${priorityFilter} priority)`}
+            {sortBy !== 'status' && ` (sorted by ${sortBy === 'created' ? 'date' : sortBy})`}
           </span>
-          {(searchQuery || filter !== 'all') && (
+          {(searchQuery || filter !== 'all' || priorityFilter !== 'all' || sortBy !== 'status') && (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => {
                 setSearchQuery('');
                 setFilter('all');
+                setPriorityFilter('all');
+                setSortBy('status');
               }}
             >
               Clear filters

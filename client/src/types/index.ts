@@ -3,6 +3,8 @@ export interface Task {
   title: string;
   description: string | null;
   status: 'PENDING' | 'COMPLETED';
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  tags: string[];
   transcriptId: string;
   createdAt: string;
   updatedAt: string;
@@ -34,6 +36,11 @@ export interface TaskSummary {
 
 export interface ChartData {
   pieChart: Array<{
+    name: string;
+    value: number;
+    color: string;
+  }>;
+  barChart: Array<{
     name: string;
     value: number;
     color: string;

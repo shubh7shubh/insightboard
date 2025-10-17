@@ -5,15 +5,19 @@ import { Header } from "@/components/Header";
 import { TranscriptForm } from "@/components/TranscriptForm";
 import { TaskList } from "@/components/TaskList";
 import { ProgressChart } from "@/components/ProgressChart";
+import { PriorityChart } from "@/components/PriorityChart";
 import { apiClient } from "@/lib/api";
 import { Task, TaskStats } from "@/types";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { PieChart, BarChart3 } from "lucide-react";
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [stats, setStats] = useState<TaskStats['overall'] | null>(null);
   const [chartData, setChartData] = useState<TaskStats['chartData'] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeChart, setActiveChart] = useState<'progress' | 'priority'>('progress');
 
   const fetchTasks = async () => {
     try {
@@ -100,12 +104,42 @@ export default function Dashboard() {
               )}
             </div>
 
-            {/* Right Column - Chart */}
+            {/* Right Column - Charts */}
             <div className="space-y-6">
-              <ProgressChart 
-                data={chartData} 
-                isLoading={isLoading}
-              />
+              {/* Chart Toggle */}
+              <div className="flex items-center justify-center gap-2">
+                <Button
+                  variant={activeChart === 'progress' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setActiveChart('progress')}
+                  className="flex items-center gap-2"
+                >
+                  <PieChart className="h-4 w-4" />
+                  Progress
+                </Button>
+                <Button
+                  variant={activeChart === 'priority' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setActiveChart('priority')}
+                  className="flex items-center gap-2"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  Priority
+                </Button>
+              </div>
+
+              {/* Chart Display */}
+              {activeChart === 'progress' ? (
+                <ProgressChart 
+                  data={chartData} 
+                  isLoading={isLoading}
+                />
+              ) : (
+                <PriorityChart 
+                  data={chartData} 
+                  isLoading={isLoading}
+                />
+              )}
             </div>
           </div>
 

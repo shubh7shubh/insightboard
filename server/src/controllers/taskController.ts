@@ -28,6 +28,8 @@ export const getAllTasks = asyncHandler(async (req: Request, res: Response) => {
         title: task.title,
         description: task.description,
         status: task.status,
+        priority: task.priority,
+        tags: task.tags,
         transcriptId: task.transcriptId,
         createdAt: task.createdAt,
         updatedAt: task.updatedAt,
@@ -73,6 +75,8 @@ export const getTaskById = asyncHandler(async (req: Request, res: Response) => {
       title: task.title,
       description: task.description,
       status: task.status,
+      priority: task.priority,
+      tags: task.tags,
       transcriptId: task.transcriptId,
       createdAt: task.createdAt,
       updatedAt: task.updatedAt,
@@ -113,6 +117,8 @@ export const updateTaskStatus = asyncHandler(async (req: Request, res: Response)
       title: updatedTask.title,
       description: updatedTask.description,
       status: updatedTask.status,
+      priority: updatedTask.priority,
+      tags: updatedTask.tags,
       transcriptId: updatedTask.transcriptId,
       createdAt: updatedTask.createdAt,
       updatedAt: updatedTask.updatedAt,
@@ -146,6 +152,14 @@ export const getTaskStatistics = asyncHandler(async (req: Request, res: Response
     prisma.task.count(),
     prisma.task.count({ where: { status: 'COMPLETED' } }),
     prisma.task.count({ where: { status: 'PENDING' } })
+  ]);
+
+  // Get priority statistics for bar chart
+  const [urgentTasks, highTasks, mediumTasks, lowTasks] = await Promise.all([
+    prisma.task.count({ where: { priority: 'URGENT' } }),
+    prisma.task.count({ where: { priority: 'HIGH' } }),
+    prisma.task.count({ where: { priority: 'MEDIUM' } }),
+    prisma.task.count({ where: { priority: 'LOW' } })
   ]);
 
   // Get tasks by transcript for detailed breakdown
@@ -194,6 +208,12 @@ export const getTaskStatistics = asyncHandler(async (req: Request, res: Response
         pieChart: [
           { name: 'Completed', value: completedTasks, color: '#22c55e' },
           { name: 'Pending', value: pendingTasks, color: '#f59e0b' }
+        ],
+        barChart: [
+          { name: 'Urgent', value: urgentTasks, color: '#ef4444' },
+          { name: 'High', value: highTasks, color: '#f97316' },
+          { name: 'Medium', value: mediumTasks, color: '#eab308' },
+          { name: 'Low', value: lowTasks, color: '#22c55e' }
         ]
       }
     }

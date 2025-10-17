@@ -19,21 +19,27 @@ export const createTranscript = asyncHandler(
         console.log("Generated action items:", actionItems);
       } catch (llmError) {
         console.error("LLM failed, using fallback:", llmError);
-        // Sample Generate mock tasks
+        // Sample Generate mock tasks with priorities and tags
         actionItems = [
           {
-            title: "Prepare Spreadsheet",
+            title: "Prep",
             description:
               "John will prepare the proposal by Friday as discussed in the meeting",
+            priority: "HIGH",
+            tags: ["proposal", "deadline", "john"]
           },
           {
-            title: "Review Workflow",
+            title: "Rev",
             description:
               "Sarah to review the budget for the new feature release",
+            priority: "MEDIUM",
+            tags: ["budget", "review", "sarah"]
           },
           {
-            title: "Schedule Meeting",
+            title: "Sched",
             description: "Schedule a follow-up meeting for next Tuesday",
+            priority: "MEDIUM",
+            tags: ["meeting", "followup", "schedule"]
           },
         ];
       }
@@ -52,6 +58,8 @@ export const createTranscript = asyncHandler(
               data: {
                 title: item.title,
                 description: item.description,
+                priority: item.priority,
+                tags: item.tags,
                 transcriptId: transcript.id,
               },
             })
@@ -77,6 +85,8 @@ export const createTranscript = asyncHandler(
             title: task.title,
             description: task.description,
             status: task.status,
+            priority: task.priority,
+            tags: task.tags,
             createdAt: task.createdAt,
           })),
           summary: {
@@ -125,6 +135,8 @@ export const getTranscripts = asyncHandler(
           title: task.title,
           description: task.description,
           status: task.status,
+          priority: task.priority,
+          tags: task.tags,
           createdAt: task.createdAt,
           updatedAt: task.updatedAt,
         })),
@@ -185,6 +197,8 @@ export const getTranscriptById = asyncHandler(
           title: task.title,
           description: task.description,
           status: task.status,
+          priority: task.priority,
+          tags: task.tags,
           createdAt: task.createdAt,
           updatedAt: task.updatedAt,
         })),
