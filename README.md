@@ -4,19 +4,26 @@ A smart, AI-powered dashboard that transforms meeting transcripts into actionabl
 
 ## 🚀 Live Deployment
 
-- **Frontend Application**: [https://insightboard-seven.vercel.app/](https://insightboard-seven.vercel.app/)
-- **Backend API**: [https://insightboard-rfxc.onrender.com](https://insightboard-rfxc.onrender.com)
-- **API Health Check**: [https://insightboard-rfxc.onrender.com/health](https://insightboard-rfxc.onrender.com/health)
+### Production Deployment (AWS EC2) - Level 3
 
-## Backend Deployment on Render
+- **Full Stack Application**: [http://15.206.178.111/](http://15.206.178.111/)
+- **Production Infrastructure**: AWS EC2 (Asia Pacific - Mumbai)
+- **Process Manager**: PM2 with auto-restart
+- **Reverse Proxy**: Nginx
 
-This backend is deployed on a serverless architecture, so it may take some time to start when inactive.
+### Alternative Deployments - (Vercel - Render)
+
+- **Frontend (Vercel)**: [https://insightboard-seven.vercel.app/](https://insightboard-seven.vercel.app/)
+- **Backend (Render)**: [https://insightboard-rfxc.onrender.com](https://insightboard-rfxc.onrender.com)
+- **Health Check**: [https://insightboard-rfxc.onrender.com/health](https://insightboard-rfxc.onrender.com/health)
+
+**Note**: Render deployment spins down after 15 minutes of inactivity. AWS EC2 production deployment is always available.
 
 ## 📊 Project Completion Status
 
 - ✅ **Level 1 - Core Features**: Fully Implemented
 - ✅ **Level 2 - Enhancements**: Fully Implemented
-- 🔄 **Level 3 - Advanced Features**: Claud AWS Deployment
+- ✅ **Level 3 - AWS Production Deployment**: Implemented
 
 ## 🤖 LLM API Used
 
@@ -61,8 +68,10 @@ This backend is deployed on a serverless architecture, so it may take some time 
 - **Database**: PostgreSQL (Supabase)
 - **Connection Pooling**: PgBouncer (Supabase)
 - **Migrations**: Prisma Migrate
-- **Frontend Hosting**: Vercel
-- **Backend Hosting**: Render
+- **Production Hosting**: AWS EC2 (ap-south-1 - Mumbai)
+- **Process Management**: PM2 (process manager with auto-restart)
+- **Reverse Proxy**: Nginx (load balancing and SSL termination ready)
+- **Alternative Hosting**: Vercel (Frontend), Render (Backend)
 
 ## ✨ Features Implemented
 
@@ -189,6 +198,60 @@ This backend is deployed on a serverless architecture, so it may take some time 
 - **Migrations**: Managed with Prisma Migrate
 - **Connection Pooling**: PgBouncer for optimal performance
 
+### Level 3 - AWS Production Deployment ✅
+
+#### 1. AWS EC2 Infrastructure
+
+- **Cloud Provider**: Amazon Web Services (AWS)
+- **Instance Type**: EC2 (Elastic Compute Cloud)
+- **Region**: Asia Pacific (Mumbai) - ap-south-1
+- **Operating System**: Ubuntu Server 22.04 LTS
+- **Public Access**: Direct IP-based access (http://15.206.178.111/)
+- **Security**: Properly configured security groups for ports 80, 443, 3000, 3001
+
+#### 2. Production-Grade Process Management
+
+- **PM2 (Process Manager 2)**:
+  - Zero-downtime deployments
+  - Automatic restart on crashes
+  - CPU and memory monitoring
+  - Log management and rotation
+  - Cluster mode support
+  - Startup script for auto-start on system reboot
+- **Process Monitoring**: Real-time process monitoring and health checks
+- **Auto-Recovery**: Automatic application restart on failures
+
+#### 3. Nginx Reverse Proxy
+
+- **High-Performance Web Server**: Nginx for serving static assets and proxying requests
+- **Load Balancing**: Ready for horizontal scaling
+- **SSL/TLS Ready**: Configured for HTTPS with self-signed certificates (upgradeable to Let's Encrypt)
+- **Caching**: Optimized response caching for better performance
+- **Compression**: Gzip compression for faster page loads
+- **Security Headers**: Configured security headers for enhanced protection
+
+#### 4. Full Stack Deployment
+
+- **Backend**: Express.js API running on port 3001
+- **Frontend**: Next.js application running on port 3000
+- **Unified Access**: Nginx reverse proxy serving both on port 80
+- **Single Server Architecture**: Cost-effective full-stack deployment on one EC2 instance
+
+#### 5. Production Configuration
+
+- **Environment Management**: Secure environment variable handling
+- **Database Connection**: Direct connection to Supabase PostgreSQL
+- **CORS Configuration**: Properly configured for production domain
+- **Error Handling**: Comprehensive error logging and monitoring
+- **Health Checks**: Dedicated health check endpoints for monitoring
+
+#### 6. Deployment Documentation
+
+- **Comprehensive Guide**: Step-by-step AWS deployment guide (AWS-DEPLOYMENT.md)
+- **Troubleshooting**: Detailed troubleshooting section for common issues
+- **Commands Reference**: Quick reference for PM2, Nginx, and system management
+- **Backup Strategy**: AMI snapshot recommendations for disaster recovery
+
 ## 📂 Project Structure
 
 ```
@@ -238,8 +301,7 @@ insightboard/
 │   ├── tsconfig.json           # TypeScript configuration
 │   └── package.json
 │
-├── DEPLOYMENT.md               # Deployment guide
-├── TROUBLESHOOTING.md          # Common issues and solutions
+deployment guide
 └── README.md                   # This file
 ```
 
@@ -464,6 +526,9 @@ enum TaskPriority {
 - **Modern Architecture**: Clean separation of concerns, modular design
 - **Error Handling**: Comprehensive error handling and user feedback
 - **Accessible**: ARIA labels, keyboard navigation, screen reader support
+- **Production-Grade Deployment**: AWS EC2 with PM2 process management and Nginx reverse proxy
+- **High Availability**: Auto-restart on failures, zero-downtime deployments
+- **Multi-Platform**: Deployed on AWS (production), Vercel, and Render
 
 ## 🔒 Security & Best Practices
 
@@ -508,17 +573,6 @@ npx prisma migrate deploy # Deploy migrations to production
 
 [https://github.com/shubh7shubh/insightboard](https://github.com/shubh7shubh/insightboard)
 
-## 💰 Cost Breakdown
-
-### Current Setup
-
-- **Vercel**
-- **Render** - spins down after 15 min
-- **Supabase**
-- **Gemini API**
-
-## 🚧 Future Enhancements (Level 3)
-
 ## 📄 License
 
 This project was created as part of the InsightBoard AI Dashboard assignment.
@@ -529,6 +583,8 @@ Built with ❤️ using Next.js, Express, Prisma, and Google Gemini AI
 
 ---
 
-**Live Demo**: [https://insightboard-seven.vercel.app/](https://insightboard-seven.vercel.app/)
+## 🌟 Quick Links
 
-**API Health**: [https://insightboard-rfxc.onrender.com/health](https://insightboard-rfxc.onrender.com/health)
+- **Production App (AWS)**: [http://15.206.178.111/](http://15.206.178.111/)
+- **Alternative Demo (Vercel)**: [https://insightboard-seven.vercel.app/](https://insightboard-seven.vercel.app/)
+- **GitHub Repository**: [https://github.com/shubh7shubh/insightboard](https://github.com/shubh7shubh/insightboard)
