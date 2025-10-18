@@ -3,6 +3,7 @@ import { prisma } from "../index.js";
 import { llmService } from "../services/llmService.js";
 import { createTranscriptSchema } from "../validation/schemas.js";
 import { asyncHandler, createError } from "../middleware/errorHandler.js";
+import { TaskPriority } from "../../generated/prisma/index.js";
 
 export const createTranscript = asyncHandler(
   async (req: Request, res: Response) => {
@@ -25,20 +26,20 @@ export const createTranscript = asyncHandler(
             title: "Prep",
             description:
               "John will prepare the proposal by Friday as discussed in the meeting",
-            priority: "HIGH",
+            priority: TaskPriority.HIGH,
             tags: ["proposal", "deadline", "john"],
           },
           {
             title: "Rev",
             description:
               "Sarah to review the budget for the new feature release",
-            priority: "MEDIUM",
+            priority: TaskPriority.MEDIUM,
             tags: ["budget", "review", "sarah"],
           },
           {
             title: "Sched",
             description: "Schedule a follow-up meeting for next Tuesday",
-            priority: "MEDIUM",
+            priority: TaskPriority.MEDIUM,
             tags: ["meeting", "followup", "schedule"],
           },
         ];
