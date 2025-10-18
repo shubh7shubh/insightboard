@@ -1,0 +1,39 @@
+# Vercel ignore file - exclude these from deployment
+
+# Development files
+*.md
+!README.md
+
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# IDE files
+.vscode
+.idea
+
+# Environment files (these are set via Vercel dashboard)
+.env
+.env.*
+!.env.example
+
+# Test files
+__tests__
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Documentation
+docs/
+DEPLOYMENT.md
+
+# Logs
+*.log
+logs
+
+# Temporary files
+*.tmp
+*.temp
+.cache
