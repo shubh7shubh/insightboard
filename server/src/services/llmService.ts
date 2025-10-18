@@ -135,28 +135,31 @@ Return only the JSON array, no additional text or explanation.
       console.log(`✅ Validated ${validatedTasks.length} tasks`);
       
       return validatedTasks;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("❌ Error generating action items:", error);
-      
+
       // More detailed error logging
       if (error instanceof Error) {
         console.error("Error message:", error.message);
         console.error("Error stack:", error.stack);
+
+        // Check for specific API errors
+        if (error.message.includes("API key")) {
+          console.error("🔑 API Key issue detected");
+          throw new Error("Invalid or missing Gemini API key");
+        } else if (error.message.includes("quota")) {
+          console.error("💰 Quota exceeded");
+          throw new Error("Gemini API quota exceeded");
+        } else if (error.message.includes("model")) {
+          console.error("🤖 Model error detected");
+          throw new Error("Gemini model not available or invalid");
+        }
+
+        throw new Error(`Failed to generate action items from transcript: ${error.message}`);
       }
-      
-      // Check for specific API errors
-      if (error.message?.includes("API key")) {
-        console.error("🔑 API Key issue detected");
-        throw new Error("Invalid or missing Gemini API key");
-      } else if (error.message?.includes("quota")) {
-        console.error("💰 Quota exceeded");
-        throw new Error("Gemini API quota exceeded");
-      } else if (error.message?.includes("model")) {
-        console.error("🤖 Model error detected");
-        throw new Error("Gemini model not available or invalid");
-      }
-      
-      throw new Error(`Failed to generate action items from transcript: ${error.message}`);
+
+      // If error is not an Error instance, throw generic error
+      throw new Error("Failed to generate action items from transcript: Unknown error");
     }
   }
 
