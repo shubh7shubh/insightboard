@@ -26,20 +26,20 @@ export const createTranscript = asyncHandler(
             description:
               "John will prepare the proposal by Friday as discussed in the meeting",
             priority: "HIGH",
-            tags: ["proposal", "deadline", "john"]
+            tags: ["proposal", "deadline", "john"],
           },
           {
             title: "Rev",
             description:
               "Sarah to review the budget for the new feature release",
             priority: "MEDIUM",
-            tags: ["budget", "review", "sarah"]
+            tags: ["budget", "review", "sarah"],
           },
           {
             title: "Sched",
             description: "Schedule a follow-up meeting for next Tuesday",
             priority: "MEDIUM",
-            tags: ["meeting", "followup", "schedule"]
+            tags: ["meeting", "followup", "schedule"],
           },
         ];
       }
